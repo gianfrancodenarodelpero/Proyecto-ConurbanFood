@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ConurbanFood – Prototipo navegable</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{--bg:#EEF1EF;--sf:#fff;--ink:#14201C;--mu:#52625B;--ln:#D3DAD6;--br:#0F4C5C;--brt:#fff;--rd:#C62828;--rdb:#FBE9E7;--gn:#1E7A4F;--gnb:#E3F3EA;--am:#9A5B00;--amb:#FFF1D6;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1513;--sf:#18231F;--ink:#EAF1EE;--mu:#A5B5AE;--ln:#2C3B35;--br:#5FB3C6;--brt:#08171B;--rd:#D9483C;--rdb:#3A1B18;--gn:#5BC48E;--gnb:#14301F;--am:#F0B24A;--amb:#33270C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1513;--sf:#18231F;--ink:#EAF1EE;--mu:#A5B5AE;--ln:#2C3B35;--br:#5FB3C6;--brt:#08171B;--rd:#D9483C;--rdb:#3A1B18;--gn:#5BC48E;--gnb:#14301F;--am:#F0B24A;--amb:#33270C;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.45 "Atkinson Hyperlegible",system-ui,sans-serif}
+.wrap{display:grid;gap:20px;justify-content:center;padding:16px;grid-template-columns:minmax(0,390px)}
+@media(min-width:820px){.wrap{grid-template-columns:390px 300px;align-items:start}}
+.phone{background:var(--sf);border:1px solid var(--ln);border-radius:26px;overflow:hidden;min-height:680px;display:flex;flex-direction:column;position:relative}
+.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--br);color:var(--brt);font-weight:700}
+.top button{background:transparent;border:0;color:inherit;font:inherit;min-width:44px;min-height:44px;cursor:pointer}
+.top span{flex:1}
+.scr{padding:16px;flex:1;overflow:auto}
+h2{font-size:1.25rem;margin:0 0 10px}h3{font-size:1.05rem;margin:16px 0 6px}
+p{margin:0 0 10px}.mu{color:var(--mu);font-size:.92rem}
+.btn{display:block;width:100%;min-height:56px;border-radius:12px;border:2px solid var(--br);background:var(--sf);color:var(--br);font-weight:700;font-size:1.05rem;font-family:inherit;margin:10px 0;cursor:pointer;padding:12px}
+.btn.p{background:var(--br);color:var(--brt)}.btn.r{background:var(--rd);border-color:var(--rd);color:#fff}
+.btn:focus-visible,select:focus-visible,input:focus-visible,.top button:focus-visible{outline:3px solid var(--am);outline-offset:2px}
+.big{border:1px solid var(--ln);border-radius:14px;padding:16px;text-align:center;margin-bottom:12px}
+.big b{display:block;font-size:2.6rem;line-height:1}
+.card{border:1px solid var(--ln);border-radius:12px;padding:12px;margin:8px 0}
+.alert{background:var(--rdb);border:2px solid var(--rd);border-radius:12px;padding:12px;margin:8px 0}
+.ok{background:var(--gnb);border:2px solid var(--gn);border-radius:12px;padding:12px;margin:8px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--ln)}
+.tag{font-weight:700;border-radius:20px;padding:2px 10px;font-size:.92rem;white-space:nowrap}
+.t-r{background:var(--rdb);color:var(--rd)}.t-g{background:var(--gnb);color:var(--gn)}.t-a{background:var(--amb);color:var(--am)}
+.picto{display:inline-flex;align-items:center;justify-content:center;width:84px;height:84px;margin:6px 10px 6px 4px;transform:rotate(45deg);border:5px solid var(--rd);background:var(--sf)}
+.picto i{transform:rotate(-45deg);font-style:normal;font-weight:700;font-size:.78rem;text-align:center;line-height:1.1;max-width:60px}
+select,input{width:100%;min-height:52px;font:inherit;border:2px solid var(--ln);border-radius:10px;padding:8px;background:var(--sf);color:var(--ink);margin:4px 0 10px}
+label{font-weight:700}.err{color:var(--rd);font-weight:700;min-height:1.3em}
+ul.l{padding-left:20px;margin:4px 0 10px}ul.l li{margin:4px 0}
+.cam{height:170px;border-radius:12px;background:repeating-linear-gradient(45deg,var(--ln),var(--ln) 10px,var(--sf) 10px,var(--sf) 20px);display:grid;place-items:center;margin-bottom:12px;font-weight:700}
+.modal{position:absolute;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:20px}
+.modal[hidden]{display:none}.modal div{background:var(--sf);border-radius:16px;padding:18px;width:100%}
+#toast{position:absolute;left:14px;right:14px;bottom:14px;background:var(--ink);color:var(--bg);border-radius:10px;padding:12px;font-weight:700;display:none}
+#guide{padding:0;margin:0;list-style:none;counter-reset:s}
+#guide li{counter-increment:s;padding:10px 12px 10px 46px;position:relative;border-left:3px solid var(--ln);color:var(--mu)}
+#guide li::before{content:counter(s);position:absolute;left:10px;top:9px;width:26px;height:26px;border-radius:50%;border:2px solid var(--ln);text-align:center;font-weight:700;font-size:.85rem;line-height:22px}
+#guide li.now{color:var(--ink);font-weight:700;border-left-color:var(--br)}#guide li.now::before{background:var(--br);color:var(--brt);border-color:var(--br)}
+#guide li.done::before{content:"✔";background:var(--gn);border-color:var(--gn);color:#fff}
+.side h2{margin-top:0}
+@media(prefers-reduced-motion:no-preference){.scr{animation:f .15s ease-out}@keyframes f{from{opacity:.4}to{opacity:1}}}
+</style></head>
+<body>
+<div class="wrap">
+<div class="phone" id="phone">
+ <div class="top"><button id="back" aria-label="Volver">←</button><span id="bar">ConurbanFood</span><button id="home-b" aria-label="Inicio">⌂</button></div>
+
+ <section class="scr" id="home" data-step="1" data-title="Inicio">
+  <div class="big"><b id="dias">47</b>días sin eventos</div>
+  <p class="mu">Último evento: 24/09/2026, derrame menor de soda cáustica en depósito 1. Resuelto el mismo día.</p>
+  <button class="btn r" data-go="scan">Escanear QR del recipiente</button>
+  <button class="btn" id="out">Cerrar sesión</button>
+  <p class="mu" id="ses"></p>
+ </section>
+
+ <section class="scr" id="scan" data-step="1" data-title="Escanear QR" hidden>
+  <div class="cam">Cámara: apuntá al QR de la etiqueta</div>
+  <label for="sub">Sustancia (simula la lectura del QR)</label>
+  <select id="sub"></select>
+  <button class="btn r" id="do-scan">Escanear</button>
+  <button class="btn" data-go="consulta">Solo consultar la hoja de seguridad</button>
+ </section>
+
+ <section class="scr" id="consulta" data-step="1" data-title="Consulta" hidden>
+  <p class="mu">La consulta está separada de la emergencia: no avisa a nadie.</p>
+  <button class="btn p" data-go="sds">Ver hoja de seguridad</button>
+ </section>
+
+ <section class="scr" id="emergency" data-step="2" data-title="Emergencia" hidden>
+  <div class="alert"><b>Emergencia: <span class="sn"></span></b><br>✔ Seguridad e Higiene fue notificada.</div>
+  <h3>Derrame o fuga</h3>
+  <ul class="l"><li>Colocarse guantes, traje y gafas.</li><li>Ventilar el sector.</li><li>Contener con barreras alrededor del derrame.</li><li>Cubrir con material absorbente.</li></ul>
+  <h3>Contacto con la persona</h3>
+  <ul class="l"><li>Retirar la ropa contaminada.</li><li>Enjuagar con abundante agua durante 15 minutos.</li><li>Llevar la hoja de seguridad al centro médico.</li></ul>
+  <div id="pic"></div>
+  <div class="card">Cabina de EPP: sector esencias, pared norte.</div>
+  <button class="btn r" id="call">Llamar al 911</button>
+  <button class="btn p" data-go="sds">Hoja de seguridad completa</button>
+  <p class="mu">Contenido de ejemplo. En el sistema real sale de la hoja de seguridad de cada sustancia.</p>
+ </section>
+
+ <section class="scr" id="sds" data-step="2" data-title="Hoja de seguridad" hidden>
+  <h2 class="sn"></h2>
+  <div class="card"><b>1. Identificación</b><br>Nombre, proveedor, uso recomendado.</div>
+  <div class="card"><b>2. Peligros (SGA)</b><br>Clasificación y pictogramas.</div>
+  <div class="card"><b>4. Primeros auxilios</b><br>Por inhalación, piel, ojos e ingestión.</div>
+  <div class="card"><b>6. Derrames</b><br>Precauciones, contención y limpieza.</div>
+  <button class="btn p" data-toast="Descargando PDF en español…">Descargar PDF</button>
+ </section>
+
+ <section class="scr" id="login" data-step="1" data-title="Ingresar" hidden>
+  <label for="usr">Usuario</label><input id="usr" value="l.diaz">
+  <label for="rol">Rol</label><select id="rol"><option>Operario</option><option>Supervisor</option><option>Técnico de Seguridad e Higiene</option><option>Administrador</option></select>
+  <label for="pst">Puesto de trabajo</label><select id="pst"><option>Puesto 3 · Esencias</option><option>Puesto 1 · Envasado</option><option>Puesto 2 · Producción: colores y sabores</option><option>Puesto 4 · Depósito 1</option><option>Puesto 5 · Depósito 2</option></select>
+  <p class="mu">Toda sesión queda asociada al puesto de trabajo.</p>
+  <button class="btn p" id="in">Ingresar</button>
+  
+ </section>
+
+ <section class="scr" id="panel" data-step="3" data-title="Panel de supervisión" hidden>
+  <div id="banner"></div>
+  <h3>Estado de la planta</h3>
+  <div id="sect"></div>
+  <h3>Estadísticas</h3>
+  <div class="row"><span>Días sin incidentes</span><b id="d2">47</b></div>
+  <div class="row"><span>Hojas de seguridad sin actualizar</span><span class="tag t-a">! 94 días</span></div>
+  <div class="row"><span>Incidentes abiertos</span><b id="abiertos">0</b></div>
+  <button class="btn" data-go="audit">Ver registro de auditoría</button>
+  <button class="btn" id="out2">Cerrar sesión</button>
+ </section>
+
+ <section class="scr" id="incident" data-step="4" data-title="Incidente" hidden></section>
+
+ <section class="scr" id="audit" data-step="6" data-title="Auditoría" hidden></section>
+
+ <section class="scr" id="admin" data-step="3" data-title="Administración" hidden>
+  <h3>Usuarios y roles</h3>
+  <div class="row"><span>m.gomez</span><span class="tag t-g">Técnico</span></div>
+  <div class="row"><span>j.perez</span><span class="tag t-g">Supervisor</span></div>
+  <button class="btn" data-toast="Alta de usuario (no incluida en el prototipo)">Dar de alta usuario</button>
+  <h3>Materias primas con QR</h3>
+  <p class="mu">10 sustancias cargadas.</p>
+  <button class="btn" data-toast="Alta de materia prima (no incluida en el prototipo)">Agregar materia prima</button>
+  <button class="btn" id="out2">Cerrar sesión</button>
+ </section>
+
+ <div class="modal" id="modal" hidden><div>
+  <h2>¿Llamar al 911?</h2><p>Se iniciará una llamada de emergencia desde este celular.</p>
+  <button class="btn r" id="yes">Sí, llamar</button><button class="btn" id="no">Cancelar</button>
+ </div></div>
+ <div id="toast" role="status"></div>
+</div>
+
+<aside class="side"><h2>Escenario: derrame de una sustancia</h2>
+<ol id="guide">
+ <li data-s="1">Iniciar sesión y escanear el QR de la etiqueta</li>
+ <li data-s="2">Ver qué hacer y avisar</li>
+ <li data-s="3">El responsable recibe la alerta</li>
+ <li data-s="4">Asignar la acción correctiva</li>
+ <li data-s="5">Completar y cerrar el incidente</li>
+ <li data-s="6">Revisar la auditoría</li>
+</ol>
+<p class="mu" style="margin-top:14px">Recorré el flujo con los botones. Prototipo con datos de ejemplo, sin conexión real.</p></aside>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const SUBS={"Diacetilo":["Inflamable","Nocivo"],"Acetaldehído":["Inflamable","Nocivo"],"Ácido acético glacial":["Inflamable","Corrosivo"],"Trans-2-hexenal":["Inflamable","Irritante"],"Agua amoniacal":["Corrosivo","Ambiente"],"Soda cáustica":["Corrosivo"],"Potasa":["Corrosivo"],"Ácido fosfórico":["Corrosivo"],"Ácido sulfúrico":["Corrosivo"],"Ácido propiónico":["Inflamable","Corrosivo"]};
+const S={sub:"Ácido sulfúrico",inc:"cerrado0",log:[],acc:null,hist:[],user:"",rol:"",pst:""};
+const hh=()=>new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});
+const log=(w,t)=>S.log.push([hh(),w,t]);
+const who=()=>S.user+" · "+S.pst.split(" · ")[0];
+const toast=t=>{const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2200)};
+$("#sub").innerHTML=Object.keys(SUBS).map(s=>`<option${s===S.sub?" selected":""}>${s}</option>`).join("");
+
+function go(id,back){
+ const cur=$$(".scr").find(e=>!e.hidden);
+ if(!back&&cur&&cur.id!==id)S.hist.push(cur.id);
+ $$(".scr").forEach(e=>e.hidden=e.id!==id);
+ if(id==="emergency")renderEm();if(id==="panel")renderPanel();if(id==="incident")renderInc();if(id==="audit")renderAudit();
+ $$(".sn").forEach(e=>e.textContent=S.sub);
+ const el=$("#"+id);let st=+el.dataset.step;if(id==="incident"&&S.inc!=="abierto")st=5;
+ $$("#guide li").forEach(li=>{const n=+li.dataset.s;li.className=n<st?"done":n===st?"now":""});
+ $("#bar").textContent=el.dataset.title;el.scrollTop=0;
+}
+function renderEm(){$("#pic").innerHTML=SUBS[S.sub].map(p=>`<span class="picto"><i>${p}</i></span>`).join("")}
+function renderPanel(){
+ const open=S.inc==="abierto"||S.inc==="asignada"||S.inc==="completada";
+ $("#banner").innerHTML=open?`<div class="alert"><b>! Emergencia activa</b><br>Derrame de ${S.sub}, sector esencias, hace 1 min.<button class="btn r" data-go="incident">Ver incidente</button></div>`:(S.inc==="cerrado"?`<div class="ok">✔ Sin emergencias activas. Último incidente cerrado.</div>`:`<div class="ok">✔ Sin emergencias activas.</div>`);
+ const sec=[["Esencias",open?"r":"g"],["Envasado","g"],["Producción: colores y sabores","g"],["Depósito 1","g"],["Depósito 2","a"]];
+ $("#sect").innerHTML=sec.map(([n,c])=>`<div class="row"><span>${n}</span><span class="tag t-${c}">${c==="r"?"✕ Crítico":c==="a"?"! Atención":"✔ Normal"}</span></div>`).join("");
+ $("#abiertos").textContent=open?1:0;
+}
+function renderInc(){
+ const el=$("#incident"),head=`<h2>Derrame de ${S.sub}</h2><div class="card">Sector esencias · Puesto 3<br>Estado: <b>${{abierto:"Abierto",asignada:"En tratamiento",completada:"Acción completada",cerrado:"Cerrado"}[S.inc]||"Abierto"}</b></div>`;
+ if(S.inc==="abierto")el.innerHTML=head+`<h3>Asignar acción correctiva</h3><label for="rs">Responsable</label><select id="rs"><option value="">Elegí una persona</option><option>J. Pérez (supervisor)</option><option>L. Díaz (operario)</option></select><label for="fl">Fecha límite</label><input id="fl" type="date"><div class="err" id="er"></div><button class="btn p" id="asg">Asignar acción</button>`;
+ else if(S.inc==="asignada")el.innerHTML=head+`<div class="card">Acción: limpiar y reponer material absorbente<br>Responsable: ${S.acc[0]} · Vence: ${S.acc[1]}</div><button class="btn p" id="cmp">Marcar acción como completada</button><p class="mu">Lo hace el responsable de la acción.</p>`;
+ else if(S.inc==="completada")el.innerHTML=head+`<div class="card">Acción completada por ${S.acc[0]}.</div><button class="btn r" id="cls">Cerrar incidente</button><p class="mu">Solo el técnico de Seguridad e Higiene puede cerrarlo.</p>`;
+ else el.innerHTML=head+`<div class="ok">✔ Incidente cerrado. Todo quedó registrado.</div><button class="btn p" data-go="audit">Ver auditoría</button>`;
+}
+function renderAudit(){
+ $("#audit").innerHTML=`<p class="mu">Los registros no se pueden editar ni borrar.</p>`+(S.log.length?S.log.map(r=>`<div class="row"><span><b>${r[1]}</b><br>${r[2]}</span><span class="mu">${r[0]}</span></div>`).join(""):`<p>Todavía no hay registros. Recorré el escenario.</p>`);
+}
+document.addEventListener("click",e=>{
+ const t=e.target.closest("button");if(!t)return;
+ if(t.dataset.go)go(t.dataset.go);
+ if(t.dataset.toast)toast(t.dataset.toast);
+ const id=t.id;
+ if(id==="back"){const p=S.hist.pop();p?go(p,true):toast("Ya estás en el inicio")}
+ if(id==="home-b"){S.hist=[];go(S.user?"home":"login",true)}
+ if(id==="do-scan"){S.sub=$("#sub").value;S.inc="abierto";S.acc=null;log(who(),"Escaneó el QR de "+S.sub);log("Sistema","Activó la emergencia y notificó a Seguridad e Higiene");go("emergency")}
+ if(id==="call")$("#modal").hidden=false;
+ if(id==="no"){$("#modal").hidden=true;toast("Llamada cancelada")}
+ if(id==="yes"){$("#modal").hidden=true;log(who(),"Llamó al 911 (confirmado)");toast("Llamando al 911…")}
+ if(id==="in"){S.user=$("#usr").value.trim()||"usuario";S.rol=$("#rol").value;S.pst=$("#pst").value;log(who(),"Inició sesión como "+S.rol);$("#ses").textContent="Sesión: "+S.user+" · "+S.rol+" · "+S.pst;S.hist=[];go(S.rol==="Administrador"?"admin":S.rol.startsWith("Técnico")?"panel":"home",true)}
+ if(id==="out"||id==="out2"){log(who(),"Cerró sesión");S.user="";S.hist=[];go("login",true)}
+ if(id==="asg"){const r=$("#rs").value,f=$("#fl").value;if(!r||!f){$("#er").textContent="Elegí un responsable y una fecha límite.";return}S.acc=[r,f.split("-").reverse().join("/")];S.inc="asignada";log(who(),"Asignó acción a "+r+", vence "+S.acc[1]);go("incident",true)}
+ if(id==="cmp"){S.inc="completada";log(S.acc[0],"Marcó la acción como completada");go("incident",true)}
+ if(id==="cls"){S.inc="cerrado";log(who(),"Cerró el incidente");go("incident",true)}
+});
+go("login",true);
+</script>
+</body></html>
